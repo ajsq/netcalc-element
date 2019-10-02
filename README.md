@@ -12,10 +12,8 @@ or embed it in your page!
 </div>
 <script src="https://ajsq.github.io/netcalc-element/netcalc.min.js"></script>
 <script>
-window.onload = (_) => {
-  var netcalc_app = Elm.Main.init({
-    node: document.getElementById('netcalc')
-  });
-}
+Elm.Main.init({
+  node: document.getElementById('netcalc')
+});
 </script>
 ```
