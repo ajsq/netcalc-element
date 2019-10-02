@@ -2,7 +2,8 @@ module Main exposing (main)
 
 import Browser
 import CalcValue as CV exposing (CalcFloat, CalcInt, CalcValue(..))
-import Html
+import Css exposing (Style, border3, px, rgb, solid)
+import Html.Styled
     exposing
         ( Html
         , input
@@ -13,24 +14,28 @@ import Html
         , text
         , th
         , thead
+        , toUnstyled
         , tr
         )
-import Html.Attributes as HtmlAttr
+import Html.Styled.Attributes as HtmlAttr
     exposing
-        ( colspan
+        ( align
+        , colspan
+        , css
         , for
         , id
         , type_
         , value
         )
-import Html.Events exposing (onInput)
+import Html.Styled.Events exposing (onInput)
+import NumberSuffix as NS
 
 
 main : Program () Model Msg
 main =
     Browser.sandbox
         { init = init
-        , view = view
+        , view = view >> toUnstyled
         , update = update
         }
 
@@ -88,7 +93,7 @@ view model =
             model.rtt
 
         reqWindow =
-            bwVal * 8 * rttVal // 1000
+            bwVal * rttVal // 1000 // 8
     in
     table []
         [ tr []
@@ -101,11 +106,12 @@ view model =
                     , type_ "string"
                     , value bwStr
                     , onInput UpdateBandwidth
+                    , errorBorder (not bwConverted)
                     ]
                     []
                 ]
             , td []
-                [ text (String.fromInt bwVal) ]
+                [ text (NS.formatInt fmtConfig bwVal ++ "bit/s") ]
             ]
         , tr []
             [ td []
@@ -117,6 +123,7 @@ view model =
                     , type_ "string"
                     , value rttStr
                     , onInput UpdateRtt
+                    , errorBorder (not rttConverted)
                     ]
                     []
                 ]
@@ -125,7 +132,34 @@ view model =
             ]
         , tr []
             [ td [] [ text "Required window" ]
-            , td [ colspan 2 ]
+            , td [ colspan 2, align "center" ]
                 [ text (String.fromInt reqWindow ++ " bytes") ]
             ]
         ]
+
+
+fmtConfig : NS.Config
+fmtConfig =
+    NS.standardConfig
+        |> (\a ->
+                { a
+                    | getSuffix =
+                        NS.suffixStandardShort
+                            >> (\s -> "  " ++ s)
+                    , minSuffix = 1000
+                }
+           )
+
+
+errorBorder : Bool -> Html.Styled.Attribute Msg
+errorBorder isErr =
+    if isErr then
+        css
+            [ border3
+                (px 2)
+                solid
+                (rgb 255 0 0)
+            ]
+
+    else
+        css []
