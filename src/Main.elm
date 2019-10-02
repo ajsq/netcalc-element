@@ -1,8 +1,28 @@
 module Main exposing (main)
 
 import Browser
-import CalcValue as CV exposing (CalcFloat, CalcInt)
-import Html exposing (Html, text)
+import CalcValue as CV exposing (CalcFloat, CalcInt, CalcValue(..))
+import Html
+    exposing
+        ( Html
+        , input
+        , label
+        , table
+        , tbody
+        , td
+        , text
+        , th
+        , thead
+        , tr
+        )
+import Html.Attributes as HtmlAttr
+    exposing
+        ( colspan
+        , for
+        , id
+        , type_
+        , value
+        )
 import Html.Events exposing (onInput)
 
 
@@ -60,4 +80,52 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    Html.text "hi"
+    let
+        (CalcValue bwStr bwVal bwConverted) =
+            model.bandwidth
+
+        (CalcValue rttStr rttVal rttConverted) =
+            model.rtt
+
+        reqWindow =
+            bwVal * 8 * rttVal // 1000
+    in
+    table []
+        [ tr []
+            [ td []
+                [ label [ for "bwInput" ] [ text "Bandwidth (bits/s)" ]
+                ]
+            , td []
+                [ input
+                    [ id "bwInput"
+                    , type_ "string"
+                    , value bwStr
+                    , onInput UpdateBandwidth
+                    ]
+                    []
+                ]
+            , td []
+                [ text (String.fromInt bwVal) ]
+            ]
+        , tr []
+            [ td []
+                [ label [ for "rttInput" ] [ text "RTT (ms)" ]
+                ]
+            , td []
+                [ input
+                    [ id "rttInput"
+                    , type_ "string"
+                    , value rttStr
+                    , onInput UpdateRtt
+                    ]
+                    []
+                ]
+            , td []
+                [ text (String.fromInt rttVal ++ " ms") ]
+            ]
+        , tr []
+            [ td [] [ text "Required window" ]
+            , td [ colspan 2 ]
+                [ text (String.fromInt reqWindow ++ " bytes") ]
+            ]
+        ]

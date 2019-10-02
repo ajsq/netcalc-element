@@ -1,7 +1,7 @@
 module CalcValue exposing
     ( CalcFloat
     , CalcInt
-    , CalcValue
+    , CalcValue(..)
     , asMaybe
     , asResult
     , floatFromStr
