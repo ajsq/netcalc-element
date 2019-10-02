@@ -9,6 +9,7 @@ deploy:
     local_dir: dist/
     on:
       tags: true
+
   - provider: releases
     skip_cleanup: true
     api_key: $GITHUB_TOKEN
@@ -17,6 +18,16 @@ deploy:
       - dist/netcalc.min.js
     on:
       tags: true
+
+    # Below release uploads all builds for owner use
+  - provider: releases
+    skip_cleanup: true
+    draft: true
+    api_key: $GITHUB_TOKEN
+    file_glob: true
+    file: dist/*
+    on:
+      branch: master
 cache:
   directories:
     - $HOME/.elm/0.19.0/package
