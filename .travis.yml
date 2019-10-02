@@ -7,3 +7,6 @@ deploy:
     skip_cleanup: true
     github_token: $GITHUB_TOKEN
     local_dir: dist/
+cache:
+  directories:
+    - $HOME/.elm/0.19.0/package
